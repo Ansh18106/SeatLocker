@@ -16,7 +16,8 @@ public class Users {
 	private String password;
 	@Column(name = "Email")
 	private String email;
-	@Column(name = "UserType")
+	@Column(name = "user_type")
+	@Enumerated(EnumType.STRING)
 	private UserType userType;
 	public Long getUserId() {
 		return userID;

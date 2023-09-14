@@ -3,48 +3,68 @@ package com.example.SeatLocker.controller;
 import com.example.SeatLocker.entities.Users;
 import com.example.SeatLocker.entities.enums.UserType;
 import com.example.SeatLocker.services.UsersServices;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping(path = "users/")
+@Controller
+@RequestMapping(path = "users")
 public class UsersController {
 
-	private final UsersServices usersServices;
+    private final UsersServices usersServices;
 
-	UsersController(UsersServices usersServices){
-		this.usersServices = usersServices;
-	}
+    @Autowired
+    public UsersController(UsersServices usersServices) {
+        this.usersServices = usersServices;
+    }
 
-	@GetMapping(path = "users")
-	public List<Users> getUsers() {
-		return usersServices.getUsers();
-	}
+    @GetMapping(path = "/all")
+    public ResponseEntity<List<Users>> getUsers() {
+        return new ResponseEntity<>(usersServices.getUsers(), HttpStatus.OK);
+    }
 
-	@PostMapping(path = "/register")
-	public void register(Users user) {
-		user.setUserType(UserType.CUSTOMER);
-		usersServices.addUser(user);
-	}
-	
-	@PostMapping(path = "/login")
-	public void login() {
-		
-	}
-	
-	@PostMapping(path = "/logout")
-	public void logout() {
-		
-	}
-	
-	@PostMapping(path = "/resetPassword")
-	public void  resetPassword() {
-		
-	}
-	
-	
+    @PostMapping(path = "/register")
+    public ResponseEntity<String> register(@RequestBody Users user) {
+        user.setUserType(UserType.CUSTOMER);
+        try{
+            usersServices.addUser(user);
+        } catch (Exception e){
+            return new ResponseEntity<>("Username or email already exists.", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>("User registered successfully.", HttpStatus.CREATED);
+    }
+
+    @PostMapping(path = "/login")
+    public void login() {
+
+    }
+
+    @PostMapping(path = "/logout")
+    public void logout() {
+
+    }
+
+    @PostMapping(path = "/resetPassword")
+    public void resetPassword() {
+
+    }
+
+    @PutMapping(path = "/update/{userId}")
+    public ResponseEntity<String> updateUser(@PathVariable("userId") Long Id, @RequestBody Users updatedUserData) {
+        System.out.println("updating");
+        try{
+            usersServices.updateUser(Id, updatedUserData);
+        } catch (Exception e){
+            System.out.println(e);
+            return new ResponseEntity<>("Username or email already exists.", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>("User updated successfully.", HttpStatus.OK);
+
+    }
+
+
 }

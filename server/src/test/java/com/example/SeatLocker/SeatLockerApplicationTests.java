@@ -27,8 +27,10 @@ class SeatLockerApplicationTests {
 	public void testCreateUser(){
 		Users user = new Users();
 		user.setUserName("Ansh");
+		user.setPassword("password");
 		user.setEmail("anshbansal18106@gmail.com");
 		user.setUserType(UserType.ADMIN);
+		this.usersRepo.save(user);
 	}
 
 
